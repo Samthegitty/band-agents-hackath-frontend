@@ -105,7 +105,7 @@ export default function App() {
 
     try {
       // NOTE: Make sure API_BASE_URL points to your Railway backend!
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://band-agents-hackath-production.up.railway.app/';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://band-agents-hackath-production.up.railway.app';
       
       const resp = await fetch(`${API_BASE_URL}/api/scan`, {
         method: 'POST',
