@@ -141,14 +141,13 @@ export default function App() {
       </header>
 
       <form className="scan-form" onSubmit={startScan}>
-        <input className="scan-form__input" type="text" placeholder="https://github.com/stripe/stripe-python" value={repoUrl} onChange={(e) => setRepoUrl(e.target.value)} disabled={status === 'starting' || status === 'running'} />
+        <input className="scan-form__input" type="text" placeholder="https://github.com/jpadilla/pyjwt" value={repoUrl} onChange={(e) => setRepoUrl(e.target.value)} disabled={status === 'starting' || status === 'running'} />
         <button className="scan-form__button" type="submit" disabled={status === 'starting' || status === 'running'}>
           {status === 'running' ? 'Scanning…' : 'Run scan'}
         </button>
       </form>
       <p className="scan-form__hint">
-        Try{' '}<button type="button" onClick={() => setRepoUrl('https://github.com/jpadilla/pyjwt')}>jpadilla/pyjwt</button>{' '}or{' '}
-        <button type="button" onClick={() => setRepoUrl('https://github.com/stripe/stripe-python')}>stripe/stripe-python</button>
+        Try{' '}<button type="button" onClick={() => setRepoUrl('https://github.com/jpadilla/pyjwt')}>jpadilla/pyjwt</button>{' '}
       </p>
 
       {status !== 'idle' && (
