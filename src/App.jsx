@@ -22,6 +22,7 @@ function authorDisplayName(handle) {
 function MessageContent({ content }) {
   if (!content) return null;
 
+  // If the message contains [CRITICAL], it's a scan report. Render it beautifully.
   if (content.includes("[CRITICAL]") || content.includes("[HIGH]")) {
     const lines = content.split('\n');
     const findings = lines.filter(l => l.includes("[CRITICAL]") || l.includes("[HIGH]"));
@@ -54,6 +55,7 @@ function MessageContent({ content }) {
     );
   }
 
+  // Default rendering for normal messages (including the AI-generated study plan)
   return <div style={{ whiteSpace: 'pre-wrap' }}>{content}</div>;
 }
 
@@ -107,6 +109,13 @@ export default function App() {
 
       ws.onmessage = (event) => {
         const msg = JSON.parse(event.data)
+        
+        // --- 🛡️ SAFETY NET: Ignore empty or ping messages ---
+        if (!msg.content || msg.content.trim() === '') {
+          console.log('Ignoring empty message');
+          return; 
+        }
+
         const authorKind = classifyAuthor(msg.author)
         updatePipelineFromMessage(authorKind, msg.is_done)
         
