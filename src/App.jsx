@@ -25,47 +25,72 @@ function authorDisplayName(handle) {
 }
 
 // --- NEW: Component to beautifully render the "Top findings:" section ---
+// --- REPLACE YOUR EXISTING MessageContent FUNCTION WITH THIS ---
 function MessageContent({ content }) {
   if (!content) return null;
 
-  if (content.includes("Top findings:")) {
-    const parts = content.split("Top findings:");
-    const intro = parts[0];
-    const findingsText = parts[1];
-    
-    // Extract individual findings lines
-    const findings = findingsText
-      .split('\n')
-      .map(line => line.trim())
-      .filter(line => line.startsWith('[CRITICAL]') || line.startsWith('[HIGH]'));
+  // Check if this is a scan report from the Assessment agent
+  if (content.includes("SCAN COMPLETE") && content.includes("Top findings:")) {
+    const lines = content.split('\n');
+    const findings = [];
+    let introLines = [];
+    let inFindings = false;
+
+    // Parse the message into intro text and individual findings
+    for (const line of lines) {
+      if (line.trim().startsWith("Top findings:")) {
+        inFindings = true;
+        continue;
+      }
+      if (inFindings) {
+        if (line.trim().startsWith("[CRITICAL]") || line.trim().startsWith("[HIGH]")) {
+          findings.push(line.trim());
+        }
+      } else {
+        introLines.push(line);
+      }
+    }
 
     return (
-      <div>
-        <div style={{ whiteSpace: 'pre-wrap', marginBottom: '12px', color: '#e2e8f0' }}>
-          {intro.trim()}
+      <div style={{ 
+        background: '#1e293b', 
+        padding: '16px', 
+        borderRadius: '8px', 
+        border: '1px solid #334155',
+        marginTop: '8px'
+      }}>
+        <div style={{ color: '#f87171', fontWeight: 'bold', marginBottom: '8px', fontSize: '1.1rem' }}>
+          🚨 Quantum Vulnerability Scan Report
         </div>
-        <div style={{ fontWeight: 'bold', marginBottom: '8px', color: '#f87171' }}>
-          Top findings:
+        <div style={{ color: '#cbd5e1', fontSize: '0.9rem', marginBottom: '12px', whiteSpace: 'pre-wrap' }}>
+          {introLines.join('\n').trim()}
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {findings.map((f, i) => (
-            <div 
-              key={i} 
-              style={{
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
-                borderRadius: '6px',
-                padding: '8px 12px',
-                fontFamily: 'monospace',
-                fontSize: '0.9rem',
-                color: '#fca5a5',
-                lineHeight: '1.4'
-              }}
-            >
-              {f}
+        
+        {findings.length > 0 && (
+          <>
+            <div style={{ color: '#f87171', fontWeight: 'bold', marginBottom: '8px', borderTop: '1px solid #334155', paddingTop: '8px' }}>
+              Top Findings:
             </div>
-          ))}
-        </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {findings.map((f, i) => (
+                <div 
+                  key={i} 
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    borderRadius: '4px',
+                    padding: '6px 10px',
+                    fontFamily: 'monospace',
+                    fontSize: '0.85rem',
+                    color: '#fca5a5',
+                  }}
+                >
+                  {f}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     );
   }
