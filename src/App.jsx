@@ -22,7 +22,6 @@ function authorDisplayName(handle) {
 function MessageContent({ content }) {
   if (!content) return null;
 
-  // If the message contains [CRITICAL], it's a scan report. Render it beautifully.
   if (content.includes("[CRITICAL]") || content.includes("[HIGH]")) {
     const lines = content.split('\n');
     const findings = lines.filter(l => l.includes("[CRITICAL]") || l.includes("[HIGH]"));
@@ -115,6 +114,14 @@ export default function App() {
           if (prev.some((m) => m.id === msg.id)) return prev
           return [...prev, { id: msg.id, authorKind, author: msg.author, content: msg.content }]
         })
+        
+        // --- 🚨 FRONTEND KILL SWITCH 🚨 ---
+        // Safety net: if we see the scan report, instantly finish the UI.
+        if (msg.content && msg.content.includes("SCAN COMPLETE") && msg.content.includes("Top findings:")) {
+          setStatus('idle')
+          setCompletedStages(new Set(AGENT_ORDER))
+          ws.close()
+        }
         
         if (msg.is_done) {
           setStatus('idle')
