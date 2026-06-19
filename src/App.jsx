@@ -55,7 +55,6 @@ function MessageContent({ content }) {
     );
   }
 
-  // Default rendering for normal messages
   return <div style={{ whiteSpace: 'pre-wrap' }}>{content}</div>;
 }
 
@@ -89,7 +88,7 @@ export default function App() {
     setStatus('starting')
 
     try {
-      const API_BASE_URL = (import.meta.env.VITE_API_URL || 'https://band-agents-hackath-production.up.railway.app');
+      const API_BASE_URL = (import.meta.env.VITE_API_URL || 'https://band-agents-hackath-production.up.railway.app').replace(/\/+$/, '');
       
       const resp = await fetch(`${API_BASE_URL}/api/scan`, {
         method: 'POST',
@@ -147,7 +146,7 @@ export default function App() {
         </button>
       </form>
       <p className="scan-form__hint">
-        Try{' '}<button type="button" onClick={() => setRepoUrl('https://github.com/jpadilla/pyjwt')}>jpadilla/pyjwt</button>{' '}
+        Try{' '}<button type="button" onClick={() => setRepoUrl('https://github.com/jpadilla/pyjwt')}>jpadilla/pyjwt</button>
       </p>
 
       {status !== 'idle' && (
